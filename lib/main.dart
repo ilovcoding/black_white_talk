@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             // @test
             return OKToast(
                 child: MaterialApp(
-              title: '工大学子',
+              title: '黑白说',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
                 fontFamily: "MaShanZheng",
