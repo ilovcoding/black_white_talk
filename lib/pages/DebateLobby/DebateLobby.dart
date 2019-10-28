@@ -1,3 +1,4 @@
+import 'package:black_white_talk/config/router.dart';
 import 'package:black_white_talk/static/Assets.dart';
 import 'package:black_white_talk/utils/enum.dart';
 import 'package:flutter/cupertino.dart';
@@ -187,9 +188,14 @@ class _DebateLobbyState extends State<DebateLobby>
                       children: <Widget>[
                         Column(
                           children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.users,
-                              size: 40,
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.users,
+                                size: 40,
+                              ),
+                              onPressed: () {
+                                Navigator.pushNamed(context, RouteName.debate);
+                              },
                             ),
                             Text('自由预约比赛', style: TextStyle(color: Colors.grey))
                           ],

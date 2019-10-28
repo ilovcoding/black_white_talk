@@ -3,6 +3,7 @@ import 'package:black_white_talk/pages/Collection/Collectiuon.dart';
 import 'package:black_white_talk/pages/Create/Create.dart';
 import 'package:black_white_talk/pages/DebateFriend/DebateFriend.dart';
 import 'package:black_white_talk/pages/DebateLife/DebateLife.dart';
+import 'package:black_white_talk/pages/DebateLobby/Debate/Debate.dart';
 import 'package:black_white_talk/pages/DebateLobby/DebateLobby.dart';
 import 'package:black_white_talk/pages/DebateResource/DebateResource.dart';
 import 'package:black_white_talk/pages/Home/Home.dart';
@@ -30,7 +31,7 @@ class RouteName {
   static const String rules = '/setting/credit/rules';
   static const String ranking = '/ranking';
   static const String debateResource = '/debateResource';
-
+  static const String debate = '/debate';
 }
 
 class Router {
@@ -64,6 +65,8 @@ class Router {
         return MaterialPageRoute(builder: (_) => Ranking());
       case RouteName.debateResource:
         return MaterialPageRoute(builder: (_) => DebateResource());
+      case RouteName.debate:
+        return MaterialPageRoute(builder: (_) => Debate());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
