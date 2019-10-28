@@ -24,21 +24,8 @@ class MyApp extends StatelessWidget {
         providers: providers,
         child: ProviderWidget<HomeModel>(
           model: HomeModel(),
-          // onModelReady: (model) => model.checkLogin(),
           builder: (context, model1, child) {
-            //5秒没到或者用户正在登陆中 展示进入系统的动画
-            // return model1.loginAnimation || model1.state == ViewState.Loading
-            //     ? Container(child: start_bg)
-          // : OKToast(
-          // child:  MaterialApp(
-          //     title: '工大学子',
-          //     theme: ThemeData(
-          //       primarySwatch: Colors.blue,
-          //       fontFamily: "MaShanZheng",
-          //     ),)
-            // initialRoute:
-            //     model1.loginSuccess ? RouteName.home : RouteName.login,
-            // @test
+  
             return OKToast(
                 child: MaterialApp(
               title: '黑白说',

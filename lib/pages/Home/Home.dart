@@ -130,7 +130,15 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Row(
-                        children: <Widget>[Icon(Icons.android), Text('管理')],
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.android),
+                            onPressed: () {
+                              Navigator.pushNamed(context, RouteName.setting);
+                            },
+                          ),
+                          Text('管理')
+                        ],
                       ),
                       SizedBox(
                         width: 20,

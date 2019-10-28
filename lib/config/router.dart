@@ -5,6 +5,11 @@ import 'package:black_white_talk/pages/DebateFriend/DebateFriend.dart';
 import 'package:black_white_talk/pages/DebateLife/DebateLife.dart';
 import 'package:black_white_talk/pages/DebateLobby/DebateLobby.dart';
 import 'package:black_white_talk/pages/Home/Home.dart';
+import 'package:black_white_talk/pages/Setting/Credit/Credit.dart';
+import 'package:black_white_talk/pages/Setting/NeedToKnowm/Duty/Duty.dart';
+import 'package:black_white_talk/pages/Setting/NeedToKnowm/NeedToKnow.dart';
+import 'package:black_white_talk/pages/Setting/NeedToKnowm/Rules/Rules.dart';
+import 'package:black_white_talk/pages/Setting/Setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +21,11 @@ class RouteName {
   static const String collection = '/collection';
   static const String create = '/create';
   static const String debateLoddy = '/debateLoddy';
+  static const String setting = '/setting';
+  static const String needtoknown = '/setting/needtoknown';
+  static const String credit = '/setting/credit';
+  static const String duty = '/setting/credit/duty';
+  static const String rules = '/setting/credit/rules';
 }
 
 class Router {
@@ -35,6 +45,16 @@ class Router {
         return MaterialPageRoute(builder: (_) => Create());
       case RouteName.debateLoddy:
         return MaterialPageRoute(builder: (_) => DebateLobby());
+      case RouteName.setting:
+        return MaterialPageRoute(builder: (_) => Setting());
+      case RouteName.needtoknown:
+        return MaterialPageRoute(builder: (_) => NeedToKonwn());
+      case RouteName.credit:
+        return MaterialPageRoute(builder: (_) => Credit());
+      case RouteName.duty:
+        return MaterialPageRoute(builder: (_) => Duty());
+      case RouteName.rules:
+        return MaterialPageRoute(builder: (_) => Rules());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
