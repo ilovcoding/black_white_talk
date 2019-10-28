@@ -260,7 +260,7 @@ class _CreateState extends State<Create> {
                   child: ListTile(
                     leading: Container(
                       decoration: BoxDecoration(
-                        image: user_avatar,000
+                        image: user_avatar,
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
                       width: 50,

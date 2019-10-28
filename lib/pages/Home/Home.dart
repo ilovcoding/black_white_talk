@@ -17,17 +17,21 @@ class _HomeState extends State<Home> {
       key: _scaffoldKey,
       appBar: AppBar(
         titleSpacing: MediaQuery.of(context).size.width / 6.0,
-        elevation: 0,
-        backgroundColor: ColorsUtil.hexColor(0x2a82e4),
+        elevation: 1,
+        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          icon: Icon(
+            Icons.menu,
+            color: Colors.black,
+          ),
           onPressed: () {
             _scaffoldKey.currentState.openDrawer();
           },
         ),
         title: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          ),
           child: RaisedButton(
             elevation: 5.0,
             shape: RoundedRectangleBorder(
@@ -38,10 +42,11 @@ class _HomeState extends State<Home> {
                 child: Center(
                   child: Text(
                     '黑白说',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 )),
-            color: ColorsUtil.hexColor(0x17abb1),
+            color: Colors.grey,
             onPressed: () {},
           ),
         ),
@@ -149,15 +154,13 @@ class _HomeState extends State<Home> {
       ),
       body: Container(
         padding: EdgeInsets.all(30.0),
-        decoration: BoxDecoration(color: ColorsUtil.hexColor(0x2a82e4)),
+        decoration: BoxDecoration(color: Colors.white),
         child: ListView(
           children: <Widget>[
-            // Column(
-            //   children: <Widget>[
             Container(
               height: MediaQuery.of(context).size.height / 4.0,
               decoration: BoxDecoration(
-                color: Colors.lightBlue,
+                color: Colors.black,
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
@@ -166,11 +169,16 @@ class _HomeState extends State<Home> {
                       spreadRadius: 2.0)
                 ],
               ),
-              child: Center(
-                child: Text(
-                  '辩论大厅',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
+              child: Listener(
+                child: Center(
+                  child: Text(
+                    '辩论大厅',
+                    style: TextStyle(color: Colors.white, fontSize: 30),
+                  ),
                 ),
+                onPointerDown: (e) {
+                  Navigator.pushNamed(context, RouteName.debateLoddy);
+                },
               ),
             ),
             SizedBox(
@@ -209,9 +217,10 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          blurRadius: 5.0,
-                          offset: Offset(5.0, 5.0),
-                          spreadRadius: 2.0)
+                        blurRadius: 5.0,
+                        offset: Offset(5.0, 5.0),
+                        spreadRadius: 2.0,
+                      )
                     ],
                   ),
                   child: Center(
@@ -256,7 +265,7 @@ class _HomeState extends State<Home> {
                 Text(
                   '   查看全部课程',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       fontFamily: "楷书"),

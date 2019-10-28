@@ -29,7 +29,11 @@ class Loading extends StatelessWidget {
         ),
         onPointerDown: (e) {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Information()));
+            context,
+            MaterialPageRoute(
+              builder: (context) => Information(),
+            ),
+          );
         },
       ),
     ));

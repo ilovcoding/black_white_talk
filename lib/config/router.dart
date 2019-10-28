@@ -3,6 +3,7 @@ import 'package:black_white_talk/pages/Collection/Collectiuon.dart';
 import 'package:black_white_talk/pages/Create/Create.dart';
 import 'package:black_white_talk/pages/DebateFriend/DebateFriend.dart';
 import 'package:black_white_talk/pages/DebateLife/DebateLife.dart';
+import 'package:black_white_talk/pages/DebateLobby/DebateLobby.dart';
 import 'package:black_white_talk/pages/Home/Home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class RouteName {
   static const String debateLife = '/debatelife';
   static const String collection = '/collection';
   static const String create = '/create';
+  static const String debateLoddy = '/debateLoddy';
 }
 
 class Router {
@@ -31,6 +33,8 @@ class Router {
         return MaterialPageRoute(builder: (_) => Collection());
       case RouteName.create:
         return MaterialPageRoute(builder: (_) => Create());
+      case RouteName.debateLoddy:
+        return MaterialPageRoute(builder: (_) => DebateLobby());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
