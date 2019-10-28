@@ -4,7 +4,9 @@ import 'package:black_white_talk/pages/Create/Create.dart';
 import 'package:black_white_talk/pages/DebateFriend/DebateFriend.dart';
 import 'package:black_white_talk/pages/DebateLife/DebateLife.dart';
 import 'package:black_white_talk/pages/DebateLobby/DebateLobby.dart';
+import 'package:black_white_talk/pages/DebateResource/DebateResource.dart';
 import 'package:black_white_talk/pages/Home/Home.dart';
+import 'package:black_white_talk/pages/Ranking/Ranking.dart';
 import 'package:black_white_talk/pages/Setting/Credit/Credit.dart';
 import 'package:black_white_talk/pages/Setting/NeedToKnowm/Duty/Duty.dart';
 import 'package:black_white_talk/pages/Setting/NeedToKnowm/NeedToKnow.dart';
@@ -26,6 +28,9 @@ class RouteName {
   static const String credit = '/setting/credit';
   static const String duty = '/setting/credit/duty';
   static const String rules = '/setting/credit/rules';
+  static const String ranking = '/ranking';
+  static const String debateResource = '/debateResource';
+
 }
 
 class Router {
@@ -55,6 +60,10 @@ class Router {
         return MaterialPageRoute(builder: (_) => Duty());
       case RouteName.rules:
         return MaterialPageRoute(builder: (_) => Rules());
+      case RouteName.ranking:
+        return MaterialPageRoute(builder: (_) => Ranking());
+      case RouteName.debateResource:
+        return MaterialPageRoute(builder: (_) => DebateResource());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

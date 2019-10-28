@@ -102,22 +102,16 @@ class _DebateLobbyState extends State<DebateLobby>
           ),
           TabBar(
             controller: _tabController,
-            indicator: BoxDecoration(),
+            indicator: BoxDecoration(color: Colors.grey),
+            unselectedLabelColor: Colors.black,
             labelPadding: EdgeInsets.all(0),
             tabs: <Widget>[
               Tab(
-                child: Text(
-                  '专业辩手区',
-                  style: TextStyle(color: Colors.black),
-                ),
+                child: Text('专业辩手区'),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width / 2.0,
-                child: Tab(
-                  child: Text('辩论爱好者'),
-                ),
-                color: Colors.grey,
-              )
+              Tab(
+                child: Text('辩论爱好者'),
+              ),
             ],
           ),
           _currentTabsIndex == 0

@@ -208,34 +208,46 @@ class _HomeState extends State<Home> {
                           spreadRadius: 2.0)
                     ],
                   ),
-                  child: Center(
+                  child: Listener(
+                    child: Center(
                       child: Text(
-                    '辩论\n资源',
-                    style: TextStyle(color: Colors.white, fontSize: 30),
-                  )),
+                        '辩论\n资源',
+                        style: TextStyle(color: Colors.white, fontSize: 30),
+                      ),
+                    ),
+                    onPointerDown: (e) {
+                      Navigator.pushNamed(context, RouteName.debateResource);
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: 10.0,
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.height / 6.0,
-                  width: MediaQuery.of(context).size.height / 6.0,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        blurRadius: 5.0,
-                        offset: Offset(5.0, 5.0),
-                        spreadRadius: 2.0,
-                      )
-                    ],
-                  ),
-                  child: Center(
+                Listener(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 6.0,
+                    width: MediaQuery.of(context).size.height / 6.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          blurRadius: 5.0,
+                          offset: Offset(5.0, 5.0),
+                          spreadRadius: 2.0,
+                        )
+                      ],
+                    ),
+                    child: Center(
                       child: Text(
-                    '辩手\n排名',
-                    style: TextStyle(color: Colors.black, fontSize: 30),
-                  )),
+                        '辩手\n排名',
+                        style: TextStyle(color: Colors.black, fontSize: 30),
+                      ),
+                    ),
+                  ),
+                  onPointerDown: (e) {
+                    Navigator.pushNamed(context, RouteName.ranking);
+                  },
                 ),
               ],
             ),
