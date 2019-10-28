@@ -20,7 +20,12 @@ class _DebateLifeState extends State<DebateLife> {
               padding: EdgeInsets.all(10.0),
               child: Stack(
                 children: <Widget>[
-                  Icon(FontAwesomeIcons.angleLeft),
+                  IconButton(
+                    icon: Icon(FontAwesomeIcons.angleLeft,size: 25,),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                   Center(
                     child: Image(
                       image: AssetImage('assets/images/avatar.png'),
