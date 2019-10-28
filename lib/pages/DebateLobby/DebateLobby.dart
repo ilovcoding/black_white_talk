@@ -1,8 +1,10 @@
 import 'package:black_white_talk/static/Assets.dart';
+import 'package:black_white_talk/utils/enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:oktoast/oktoast.dart';
 
 class DebateLobby extends StatefulWidget {
   @override
@@ -35,6 +37,7 @@ class _DebateLobbyState extends State<DebateLobby>
     }
   }
 
+  RegExp homeNum = RegExp(r'^[0-9]*$');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,13 +68,72 @@ class _DebateLobbyState extends State<DebateLobby>
           SizedBox(
             height: 30,
             child: FlatButton(
-              color: Colors.white,
               textColor: Colors.black,
-              child: Text('查找'),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(70.0)),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Text('查找'),
+              ),
               onPressed: () {
-                print(_findContext.text);
+                if (_findContext.text != '' &&
+                    homeNum.hasMatch(_findContext.text)) {
+                  return showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SimpleDialog(
+                        title: Text(
+                          '欢迎来到辩场${_findContext.text}',
+                          style: TextStyle(fontFamily: '楷书'),
+                        ),
+                        children: <Widget>[
+                          Text(
+                            "  请选择你的身份",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 17),
+                          ),
+                          SimpleDialogOption(
+                            child: OutlineButton(
+                              child: Text('主席'),
+                              onPressed: () {
+                                Navigator.pop(context, Identity.ChairMan);
+                              },
+                            ),
+                          ),
+                          SimpleDialogOption(
+                            child: OutlineButton(
+                              child: Text('辩手'),
+                              onPressed: () {
+                                Navigator.pop(context, Identity.Debater);
+                              },
+                            ),
+                          ),
+                          SimpleDialogOption(
+                            child: OutlineButton(
+                              child: Text('评委'),
+                              onPressed: () {
+                                Navigator.pop(context, Identity.Judge);
+                              },
+                            ),
+                          ),
+                          SimpleDialogOption(
+                            child: OutlineButton(
+                              child: Text('观众'),
+                              onPressed: () {
+                                Navigator.pop(context, Identity.Audience);
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  showToast('请输入纯数字的房间号');
+                  return null;
+                }
                 // print('辩论大厅查找');
               },
             ),
