@@ -1,4 +1,5 @@
-import 'package:black_white_talk/models/HomeModel.dart';
+
+import 'package:black_white_talk/view_model/HomeModel.dart';
 import 'package:provider/provider.dart';
 
 List<SingleChildCloneableWidget> providers = [

@@ -1,4 +1,4 @@
-import 'package:black_white_talk/models/HomeModel.dart';
+import 'package:black_white_talk/view_model/HomeModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
@@ -25,15 +25,14 @@ class MyApp extends StatelessWidget {
         child: ProviderWidget<HomeModel>(
           model: HomeModel(),
           builder: (context, model1, child) {
-  
             return OKToast(
-                child: MaterialApp(
+              child: MaterialApp(
               title: '黑白说',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
-                fontFamily: "MaShanZheng",
+                fontFamily: "楷书",
               ),
-              initialRoute: RouteName.login,
+              initialRoute: RouteName.home,
               onGenerateRoute: Router.generateRoute,
             ));
           },

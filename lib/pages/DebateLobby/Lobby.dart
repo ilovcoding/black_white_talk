@@ -27,11 +27,7 @@ class _DebateLobbyState extends State<DebateLobby>
   }
 
   _handleTabsChange() {
-    // print('_tabController Index ${_tabController.index}');
-    // print('indexIs Changing ${_tabController.indexIsChanging}');
-    // print('mounted ${this.mounted}');
     if (_tabController.indexIsChanging) {
-      print(_tabController.index);
       setState(() {
         _currentTabsIndex = _tabController.index;
       });
@@ -79,8 +75,7 @@ class _DebateLobbyState extends State<DebateLobby>
                 child: Text('查找'),
               ),
               onPressed: () {
-                if (_findContext.text != '' &&
-                    homeNum.hasMatch(_findContext.text)) {
+                if (_findContext.text != '' && homeNum.hasMatch(_findContext.text)) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -93,7 +88,9 @@ class _DebateLobbyState extends State<DebateLobby>
                           Text(
                             "  请选择你的身份",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 17),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                            ),
                           ),
                           SimpleDialogOption(
                             child: OutlineButton(
@@ -135,7 +132,6 @@ class _DebateLobbyState extends State<DebateLobby>
                   showToast('请输入纯数字的房间号');
                   return null;
                 }
-                // print('辩论大厅查找');
               },
             ),
           )
@@ -194,7 +190,7 @@ class _DebateLobbyState extends State<DebateLobby>
                                 size: 40,
                               ),
                               onPressed: () {
-                                Navigator.pushNamed(context, RouteName.debate);
+                                Navigator.pushNamed(context, RouteName.homeList);
                               },
                             ),
                             Text('自由预约比赛', style: TextStyle(color: Colors.grey))

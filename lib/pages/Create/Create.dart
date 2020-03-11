@@ -88,7 +88,6 @@ class _CreateState extends State<Create> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        print('头像');
                       },
                     ),
                   ),

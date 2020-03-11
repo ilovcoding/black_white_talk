@@ -1,3 +1,8 @@
+
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+
 int getASCII(String lesson_code) {
   List codeList = lesson_code.split("--");
   int sum = 0;
@@ -11,4 +16,12 @@ int getASCII(String lesson_code) {
     return sum;
   }
   return lesson_code.length;
+}
+
+String tosha256(String str){
+  var key = utf8.encode('sha256-key');
+  var bytes = utf8.encode(str);
+  var hmacSha256 = new Hmac(sha256, key); // HMAC-SHA256
+  var digest = hmacSha256.convert(bytes);
+  return digest.toString();
 }

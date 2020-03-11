@@ -8,7 +8,8 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+  
+     body: Container(
       alignment: Alignment.bottomRight,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -16,9 +17,10 @@ class Loading extends StatelessWidget {
       child: Listener(
         child: Container(
           width: MediaQuery.of(context).size.width / 3.0,
+          margin: EdgeInsets.all(10),
           child: Row(
             children: <Widget>[
-              handPointUp,
+              SizedBox(width: 40,height: 40,child: handPointUp,),
               Text(
                 loadingText,
                 textAlign: TextAlign.center,

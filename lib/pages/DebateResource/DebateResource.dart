@@ -41,7 +41,6 @@ class _DebateResourceState extends State<DebateResource> {
               child: Text('搜索', style: TextStyle(color: Colors.white)),
             ),
             onPressed: () {
-              print(_find.text);
             },
           )
         ],
@@ -168,7 +167,7 @@ class _DebateResourceState extends State<DebateResource> {
                         width: 150,
                         color: Colors.grey[200],
                         child: IconButton(icon: Icon(FontAwesomeIcons.play),onPressed: (){
-                          print('20分钟前');
+                          // print('20分钟前');
                         },),
                       ),
                       Container(
