@@ -1,5 +1,6 @@
 import 'package:black_white_talk/config/router.dart';
 import 'package:black_white_talk/static/Assets.dart';
+import 'package:black_white_talk/utils/agora.dart';
 import 'package:black_white_talk/utils/enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _DebateLobbyState extends State<DebateLobby>
   @override
   void initState() {
     // TODO: implement initState
+    socket.disconnect();
     super.initState();
 
     _tabController = TabController(length: 2, vsync: this);
@@ -75,7 +77,8 @@ class _DebateLobbyState extends State<DebateLobby>
                 child: Text('查找'),
               ),
               onPressed: () {
-                if (_findContext.text != '' && homeNum.hasMatch(_findContext.text)) {
+                if (_findContext.text != '' &&
+                    homeNum.hasMatch(_findContext.text)) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -104,7 +107,7 @@ class _DebateLobbyState extends State<DebateLobby>
                             child: OutlineButton(
                               child: Text('辩手'),
                               onPressed: () {
-                                Navigator.pop(context, Identity.Debater);
+                                Navigator.pop(context, Identity.ChairMan);
                               },
                             ),
                           ),
@@ -112,7 +115,7 @@ class _DebateLobbyState extends State<DebateLobby>
                             child: OutlineButton(
                               child: Text('评委'),
                               onPressed: () {
-                                Navigator.pop(context, Identity.Judge);
+                                Navigator.pop(context, Identity.ChairMan);
                               },
                             ),
                           ),
@@ -120,7 +123,7 @@ class _DebateLobbyState extends State<DebateLobby>
                             child: OutlineButton(
                               child: Text('观众'),
                               onPressed: () {
-                                Navigator.pop(context, Identity.Audience);
+                                Navigator.pop(context, Identity.ChairMan);
                               },
                             ),
                           ),
@@ -190,7 +193,8 @@ class _DebateLobbyState extends State<DebateLobby>
                                 size: 40,
                               ),
                               onPressed: () {
-                                Navigator.pushNamed(context, RouteName.homeList);
+                                Navigator.pushNamed(
+                                    context, RouteName.homeList);
                               },
                             ),
                             Text('自由预约比赛', style: TextStyle(color: Colors.grey))

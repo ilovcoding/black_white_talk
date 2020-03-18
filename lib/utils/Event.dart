@@ -1,6 +1,5 @@
 import 'package:event_bus/event_bus.dart';
 
-EventBus eventBus = new EventBus();
 
 class Event {
   static EventBus bus = new EventBus();
@@ -8,5 +7,7 @@ class Event {
 
 class EventHomeListItem {
   var data;
-  EventHomeListItem(data);
+  EventHomeListItem(this.data);
 }
+
+Stream eventStream = Event.bus.on<EventHomeListItem>();

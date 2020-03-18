@@ -1,25 +1,25 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:black_white_talk/utils/Event.dart';
+import 'package:black_white_talk/utils/request/Request.dart';
 import 'package:black_white_talk/utils/utils.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Debate extends StatefulWidget {
+  final String homeid;
+  Debate({Key key, this.homeid}) : super(key: key);
   @override
   _DebateState createState() => _DebateState();
 }
 
 class _DebateState extends State<Debate> {
-  bool _inputType = true;
-  static List _users = List<int>();
-  bool muted = false;
-
+  String homeName = "";
   @override
   void dispose() {
-    // clear users
-    _users.clear();
-    // destroy sdk
     AgoraRtcEngine.leaveChannel();
     AgoraRtcEngine.destroy();
     super.dispose();
@@ -27,126 +27,53 @@ class _DebateState extends State<Debate> {
 
   @override
   void initState() {
+    // 获取辩题
+    getHomeName();
     super.initState();
-    // initialize agora sdk
-    initialize();
   }
 
-  void initialize() {
-    if (APP_ID.isEmpty) {
-      setState(() {
-        showToast('获取appid失败');
-      });
-      return;
-    }
-  }
-
-  void changeInputType(bool type) {
+  void getHomeName() async {
+    String _title = await Request.postFormData(
+      '/homeName',
+      FormData.fromMap({
+        "homeid": widget.homeid,
+      }),
+    );
+    print(_title);
     setState(() {
-      _inputType = type;
+      homeName = _title;
     });
   }
+
+  void initialize() async {}
 
   Container titleContainer() {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 0, 50, 0),
       child: RaisedButton(
-        color: Colors.grey,
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Container(
-          width: 100,
-          height: 40,
-          child: Center(
-            child: Text(
-              "XXX辩场",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+          color: Colors.grey,
+          elevation: 5.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Container(
+            // width: 100,
+            height: 40,
+            child: Center(
+              child: Text(
+                homeName,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-        ),
-        onPressed: () {
-          return _onPressedfun(context);
-        },
-      ),
+          onPressed: null),
     );
   }
 
-  var _onPressedfun = (BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          contentPadding: EdgeInsets.all(20),
-          children: <Widget>[
-            Text(
-              '主席',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Wrap(
-              spacing: 20,
-              children: <Widget>[
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/user_avatar.png'),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/user_avatar2.png'),
-                ),
-              ],
-            ),
-            Text(
-              '  评委',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Wrap(
-              spacing: 20,
-              children: <Widget>[
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/user_avatar.png'),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/user_avatar2.png'),
-                ),
-              ],
-            ),
-            Text(
-              '观众',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Wrap(
-              spacing: 20,
-              children: <Widget>[
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/user_avatar.png'),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/user_avatar2.png'),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  };
-
-  Widget submitText() {
+  Widget _submitText() {
     return Container(
       padding: EdgeInsets.all(5),
       child: Row(
@@ -196,47 +123,7 @@ class _DebateState extends State<Debate> {
     );
   }
 
-  Widget systemInfo() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Card(
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                '系统\n消息',
-                style: TextStyle(fontSize: 20),
-              ),
-              decoration: BoxDecoration(color: Colors.grey[200]),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '1. 正方一遍陈词结束，用时03：00;',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '2. 反方四辩盘问正方一辩结束，用时01：00.',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
-            SizedBox(
-              width: 10,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget msgInfo() {
+  Widget _msgInfo() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Card(
@@ -247,7 +134,7 @@ class _DebateState extends State<Debate> {
               padding: EdgeInsets.all(10),
               width: 60,
               child: Text(
-                '观\n战\n消\n息',
+                '文\n本\n消\n息',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20),
               ),
@@ -256,18 +143,19 @@ class _DebateState extends State<Debate> {
             SizedBox(
               width: 10,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '某：正方一辩逻辑感好强',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  '某某：感觉正方要输了，完全不是对手啊',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
+            Container(
+              child: ListView(
+                children: <Widget>[
+                  Text(
+                    '某：正方一辩逻辑感好强',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    '某某：感觉正方要输了，完全不是对手啊',
+                    style: TextStyle(fontSize: 16),
+                  )
+                ],
+              ),
             ),
             SizedBox(
               width: 10,
@@ -288,137 +176,131 @@ class _DebateState extends State<Debate> {
         leading: Icon(Icons.backspace),
         title: Center(child: titleContainer()),
       ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height / 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Text('正方一辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar2.png'),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('正方二辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar2.png'),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('正方三辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar2.png'),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('正方四辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar2.png'),
-                        )
-                      ],
+                    Text('正方一辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar2.png'),
                     )
                   ],
-                ),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      InkWell(
-                        child: IconButton(
-                          icon: Icon(
-                            FontAwesomeIcons.microphoneAlt,
-                            size: 60,
-                            color: Colors.lightBlue,
-                          ),
-                          onPressed: () {},
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Text(
-                        '   点击开始',
-                        style: TextStyle(
-                            color: Colors.lightBlue,
-                            fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
                 ),
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Text('反方一辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar.png'),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('反方二辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar.png'),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('反方三辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar.png'),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('反方四辩论'),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset('assets/images/user_avatar.png'),
-                        )
-                      ],
+                    Text('正方二辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar2.png'),
                     )
                   ],
                 ),
+                Column(
+                  children: <Widget>[
+                    Text('正方三辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar2.png'),
+                    )
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Text('正方四辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar2.png'),
+                    )
+                  ],
+                )
               ],
             ),
-          ),
-          systemInfo(),
-          msgInfo(),
-          submitText()
-        ],
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  InkWell(
+                    child: IconButton(
+                      icon: Icon(
+                        FontAwesomeIcons.microphoneAlt,
+                        size: 60,
+                        color: Colors.lightBlue,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    '   点击开始',
+                    style: TextStyle(
+                        color: Colors.lightBlue, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Text('反方一辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar.png'),
+                    )
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Text('反方二辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar.png'),
+                    )
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Text('反方三辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar.png'),
+                    )
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Text('反方四辩论'),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset('assets/images/user_avatar.png'),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
+      // msgInfo(),
+      // submitText()
     );
   }
 }
