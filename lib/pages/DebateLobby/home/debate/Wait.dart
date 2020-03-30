@@ -19,20 +19,12 @@ class _WaitState extends State<Wait> {
   bool _canJoin = false;
   @override
   void initState() {
-    // socket.open();
     // 通过socket获取成员信息
     handlesocket();
     //初始化声网相关操作
     initializeAgora();
     super.initState();
   }
-
-  // @override
-  // void dispose() {
-  //   // AgoraRtcEngine.leaveChannel();
-  //   // AgoraRtcEngine.destroy();
-  //   super.dispose();
-  // }
 
   Future<void> initializeAgora() async {
     if (APP_ID.isEmpty) {
@@ -52,11 +44,7 @@ class _WaitState extends State<Wait> {
       null,
       widget.userType.index + 1,
     );
-
-    // if (widget.userType != Identity.ChairMan) {
-    // 静音本地，初始化不静音
     await AgoraRtcEngine.muteLocalAudioStream(false);
-    // }
   }
 
   Future<void> _initAgoraRtcEngine() async {
@@ -76,6 +64,7 @@ class _WaitState extends State<Wait> {
     AgoraRtcEngine.onLeaveChannel = () {};
 
     AgoraRtcEngine.onUserJoined = (int uid, int elapsed) {
+      print(uid);
       showToast("${UserTypes[uid - 1]}加入");
     };
 
@@ -92,48 +81,29 @@ class _WaitState extends State<Wait> {
   }
 
   void handlesocket() {
+    int oldUserListLength = _userList.length;
     socket.emit('getuser', widget.homeid);
     String ongetuser = "getuser${widget.homeid}";
-    String canJoin = "canjoin${widget.homeid}";
-    int oldUserListLength = _userList.length;
     socket.on(ongetuser, (var data) {
-      print(data);
       if (oldUserListLength != data.length) {
         if (mounted) {
+          oldUserListLength = data.length;
           setState(() {
             _userList = data;
           });
-          oldUserListLength = _userList.length;
         }
-      }
-    });
-    socket.on(canJoin, (var data) {
-      if (mounted) {
-        setState(() {
-          _canJoin = true;
-        });
       }
     });
   }
 
-  // void gotoDebate() {}
   @override
   Widget build(BuildContext context) {
-    if (_canJoin) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Debate(homeid: widget.homeid),
-        ),
-      );
-    }
     List<Widget> chairman = [];
     List<Widget> positive = []; //正方人数
     List<Widget> negative = []; // 反方人数
     _userList.forEach((var data) {
-      String name =
-          UserTypes[int.parse(data['index']) - 1] + " : " + data['name'];
-      if (int.parse(data['index']) == 1) {
+      String name = UserTypes[data['index'] - 1] + " : " + data['name'];
+      if (data['index'] == 1) {
         chairman = [
           Container(
             width: 40,
@@ -143,7 +113,7 @@ class _WaitState extends State<Wait> {
           Text(name)
         ];
       }
-      if (int.parse(data['index']) >= 2 && int.parse(data['index']) <= 5) {
+      if (data['index'] >= 2 && data['index'] <= 5) {
         positive.add(
           Column(
             children: <Widget>[
@@ -156,7 +126,7 @@ class _WaitState extends State<Wait> {
             ],
           ),
         );
-      } else if (int.parse(data['index']) >= 6) {
+      } else if (data['index'] >= 6) {
         negative.add(
           Column(
             children: <Widget>[
@@ -171,6 +141,7 @@ class _WaitState extends State<Wait> {
         );
       }
     });
+
     OutlineButton startButton() {
       if (positive.isNotEmpty && negative.isNotEmpty) {
         return OutlineButton(
@@ -189,8 +160,10 @@ class _WaitState extends State<Wait> {
           ),
           onPressed: () {
             //主席静音掉所有其他的远程连接
-            AgoraRtcEngine.muteAllRemoteAudioStreams(true);
-            socket.emit("canjoin", widget.homeid);
+            if (widget.userType == Identity.ChairMan) {
+              //  主席拥有禁言远端的权力
+              AgoraRtcEngine.muteAllRemoteAudioStreams(true);
+            }
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -217,63 +190,10 @@ class _WaitState extends State<Wait> {
             ),
           ),
           // 开发环境 onPressed 回调函数应该变成 null
-          onPressed: () {
-            //主席静音掉所有其他的远程连接
-            AgoraRtcEngine.muteAllRemoteAudioStreams(true);
-            socket.emit("canjoin", widget.homeid);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Debate(
-                  homeid: widget.homeid,
-                ),
-              ),
-            );
-          },
+          onPressed: null,
         );
       }
     }
-
-    // OutlineButton joinButton() {
-    //   if (positive.isNotEmpty && negative.isNotEmpty) {
-    //     return OutlineButton(
-    //       color: Colors.grey,
-    //       textColor: Colors.black,
-    //       child: Container(
-    //         padding: EdgeInsets.all(15),
-    //         child: Text(
-    //           "开始",
-    //           style: TextStyle(
-    //             color: Colors.black,
-    //             fontWeight: FontWeight.bold,
-    //             fontSize: 20,
-    //           ),
-    //         ),
-    //       ),
-    //       onPressed: () {
-    //         //主席静音掉所有其他的远程连接
-    //         AgoraRtcEngine.muteAllRemoteAudioStreams(true);
-    //       },
-    //     );
-    //   } else {
-    //     return OutlineButton(
-    //       color: Colors.grey,
-    //       textColor: Colors.black,
-    //       child: Container(
-    //         padding: EdgeInsets.all(15),
-    //         child: Text(
-    //           "等待成员加入中.....",
-    //           style: TextStyle(
-    //             color: Colors.black,
-    //             fontWeight: FontWeight.bold,
-    //             fontSize: 20,
-    //           ),
-    //         ),
-    //       ),
-    //       onPressed: null,
-    //     );
-    //   }
-    // }
 
     return Container(
       padding: EdgeInsets.all(10),
@@ -305,8 +225,7 @@ class _WaitState extends State<Wait> {
             ),
           ),
           SizedBox(height: 20),
-          widget.userType == Identity.ChairMan ? startButton() : SizedBox(),
-          // widget.userType != Identity.ChairMan ? joinButton() : SizedBox()
+          startButton(),
         ],
       ),
     );

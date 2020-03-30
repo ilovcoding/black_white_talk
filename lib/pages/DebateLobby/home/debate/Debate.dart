@@ -18,6 +18,7 @@ class Debate extends StatefulWidget {
 
 class _DebateState extends State<Debate> {
   String homeName = "";
+  List<dynamic> _userList = [];
   @override
   void dispose() {
     AgoraRtcEngine.leaveChannel();
@@ -29,6 +30,8 @@ class _DebateState extends State<Debate> {
   void initState() {
     // 获取辩题
     getHomeName();
+    //  获取成员信息
+    getRoleInfo();
     super.initState();
   }
 
@@ -39,13 +42,26 @@ class _DebateState extends State<Debate> {
         "homeid": widget.homeid,
       }),
     );
-    print(_title);
     setState(() {
       homeName = _title;
     });
   }
 
-  void initialize() async {}
+  void getRoleInfo() async {
+    int oldUserListLength = _userList.length;
+    socket.emit('getuser', widget.homeid);
+    String ongetuser = "getuser${widget.homeid}";
+    socket.on(ongetuser, (var data) {
+      if (oldUserListLength != data.length) {
+        if (mounted) {
+          oldUserListLength = data.length;
+          setState(() {
+            _userList = data;
+          });
+        }
+      }
+    });
+  }
 
   Container titleContainer() {
     return Container(

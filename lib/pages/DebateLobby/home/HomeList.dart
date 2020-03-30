@@ -5,6 +5,7 @@ import 'package:black_white_talk/pages/DebateLobby/home/debate/Debate.dart';
 import 'package:black_white_talk/pages/DebateLobby/home/debate/Wait.dart';
 import 'package:black_white_talk/utils/Storage.dart';
 import 'package:black_white_talk/utils/enum.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -69,34 +70,50 @@ class _HomeListState extends State<HomeList> {
       child: OutlineButton(
         child: Text(_userTypes[userType.index]),
         onPressed: () async {
-          String _token = await Storage.getString(Storage.token);
-          socket.emit('adduser', "${homeid};${_token};${userType.index + 1}");
-          socket.on(
-            "adduser${_token}",
-            (var data) {
-              if (data[0] == true) {
-                return Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Debate(homeid: homeid),
-                  ),
-                );
-              }
-              if (data["${userType.index + 1}"] != _token) {
-                showToast("${_userTypes[userType.index]}已有人选");
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Wait(
-                      homeid: homeid,
-                      userType: userType,
-                    ),
-                  ),
-                );
-              }
-            },
-          );
+          var res = await DebateApi.api.selectRole(FormData.fromMap({
+            'homeid': homeid,
+            'userType': userType.index + 1,
+          }));
+          // print(res);
+          if (res == true) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Wait(
+                  homeid: homeid,
+                  userType: userType,
+                ),
+              ),
+            );
+          }
+          // String _token = await Storage.getString(Storage.token);
+          // socket.emit('adduser', "${homeid};${_token};${userType.index + 1}");
+          // socket.on(
+          //   "adduser${_token}",
+          //   (var data) {
+          //     if (data[0] == true) {
+          //       return Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => Debate(homeid: homeid),
+          //         ),
+          //       );
+          //     }
+          //     if (data["${userType.index + 1}"] != _token) {
+          //       showToast("${_userTypes[userType.index]}已有人选");
+          //     } else {
+          //       Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => Wait(
+          //             homeid: homeid,
+          //             userType: userType,
+          //           ),
+          //         ),
+          //       );
+          //     }
+          //   },
+          // );
         },
       ),
     );

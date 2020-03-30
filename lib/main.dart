@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     BuildContext _pagecontext = context;
     return MultiProvider(
-        providers: providers,
-        child: ProviderWidget<HomeModel>(
-          model: HomeModel(),
-          builder: (context, model1, child) {
-            return OKToast(
-              child: MaterialApp(
+      providers: providers,
+      child: ProviderWidget<HomeModel>(
+        model: HomeModel(),
+        builder: (context, model1, child) {
+          return OKToast(
+            child: MaterialApp(
               title: '黑白说',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
@@ -34,8 +34,10 @@ class MyApp extends StatelessWidget {
               ),
               initialRoute: RouteName.home,
               onGenerateRoute: Router.generateRoute,
-            ));
-          },
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 }
