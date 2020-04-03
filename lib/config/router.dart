@@ -1,11 +1,12 @@
 import 'package:black_white_talk/pages/Collection/Collectiuon.dart';
+import 'package:black_white_talk/pages/Course/Course.dart';
 import 'package:black_white_talk/pages/Create/Create.dart';
 import 'package:black_white_talk/pages/DebateFriend/DebateFriend.dart';
 import 'package:black_white_talk/pages/DebateLife/DebateLife.dart';
 import 'package:black_white_talk/pages/DebateLobby/Lobby.dart';
 import 'package:black_white_talk/pages/DebateLobby/home/HomeList.dart';
 import 'package:black_white_talk/pages/DebateLobby/home/debate/Debate.dart';
-import 'package:black_white_talk/pages/DebateResource/DebateResource.dart';
+import 'package:black_white_talk/pages/DebateResource/DebateResourcePage.dart';
 import 'package:black_white_talk/pages/Home/Home.dart';
 import 'package:black_white_talk/pages/Login/Login.dart';
 import 'package:black_white_talk/pages/Ranking/Ranking.dart';
@@ -37,6 +38,7 @@ class RouteName {
   static const String debate = '/debate';
   static const String register = '/register';
   static const String homeList = '/debate/homelist';
+  static const String debateCourse = '/debate/course';
 }
 
 class Router {
@@ -69,13 +71,15 @@ class Router {
       case RouteName.ranking:
         return MaterialPageRoute(builder: (_) => Ranking());
       case RouteName.debateResource:
-        return MaterialPageRoute(builder: (_) => DebateResource());
+        return MaterialPageRoute(builder: (_) => DebateResourcePage());
       case RouteName.debate:
         return MaterialPageRoute(builder: (_) => Debate());
       case RouteName.register:
         return MaterialPageRoute(builder: (_) => Register());
       case RouteName.homeList:
         return MaterialPageRoute(builder: (_) => HomeList());
+      case RouteName.debateCourse:
+        return MaterialPageRoute(builder: (_)=> Course());  
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -86,34 +86,6 @@ class _HomeListState extends State<HomeList> {
               ),
             );
           }
-          // String _token = await Storage.getString(Storage.token);
-          // socket.emit('adduser', "${homeid};${_token};${userType.index + 1}");
-          // socket.on(
-          //   "adduser${_token}",
-          //   (var data) {
-          //     if (data[0] == true) {
-          //       return Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute(
-          //           builder: (context) => Debate(homeid: homeid),
-          //         ),
-          //       );
-          //     }
-          //     if (data["${userType.index + 1}"] != _token) {
-          //       showToast("${_userTypes[userType.index]}已有人选");
-          //     } else {
-          //       Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute(
-          //           builder: (context) => Wait(
-          //             homeid: homeid,
-          //             userType: userType,
-          //           ),
-          //         ),
-          //       );
-          //     }
-          //   },
-          // );
         },
       ),
     );

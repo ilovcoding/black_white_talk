@@ -5,6 +5,7 @@ import 'package:black_white_talk/static/Assets.dart';
 import 'package:black_white_talk/utils/Storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:oktoast/oktoast.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -57,7 +58,7 @@ class _HomeState extends State<Home> {
               height: 10,
             ),
             // @test 先跳转到登录
-            router(debateCourse(), RouteName.login)
+            router(debateCourse(), RouteName.debateCourse)
           ],
         ),
       ),
@@ -67,7 +68,15 @@ class _HomeState extends State<Home> {
   Listener router(Widget container, String route) {
     return Listener(
       child: container,
-      onPointerDown: (e) {
+      onPointerDown: (e) async {
+        if (route == RouteName.debateLoddy) {
+          // 校验辩论大厅的token
+          var $token = await Storage.getBool(Storage.hasLogin);
+          if ($token != true) {
+            showToast('请您先登录');
+            return null;
+          }
+        }
         Navigator.pushNamed(context, route);
       },
     );
@@ -106,7 +115,10 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.all(Radius.circular(20.0)),
         boxShadow: <BoxShadow>[
           BoxShadow(
-              blurRadius: 5.0, offset: Offset(5.0, 5.0), spreadRadius: 2.0)
+            blurRadius: 5.0,
+            offset: Offset(5.0, 5.0),
+            spreadRadius: 2.0,
+          )
         ],
       ),
       child: Center(
@@ -238,8 +250,8 @@ class _HomeState extends State<Home> {
   }
 
   // 左侧 抽屉版块
-  Column leftDrawer() {
-    return Column(
+  Widget leftDrawer() {
+    return ListView(
       children: <Widget>[
         Container(
           child: Image.asset('assets/images/drawer.png'),
@@ -332,12 +344,11 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.all(Radius.circular(20.0)),
       ),
       child: Text(
-        '  MOOC优秀辩论课程',
+        '  优秀辩论课程推荐',
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
           fontSize: 20,
-          fontFamily: "楷书",
         ),
       ),
     );

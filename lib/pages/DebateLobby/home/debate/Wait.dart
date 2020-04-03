@@ -1,7 +1,9 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:black_white_talk/api/Debate.dart';
 import 'package:black_white_talk/pages/DebateLobby/home/debate/Debate.dart';
 import 'package:black_white_talk/utils/agora.dart';
 import 'package:black_white_talk/utils/enum.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 
@@ -15,8 +17,6 @@ class Wait extends StatefulWidget {
 
 class _WaitState extends State<Wait> {
   List<dynamic> _userList = [];
-  // Timer _timer;
-  bool _canJoin = false;
   @override
   void initState() {
     // 通过socket获取成员信息
@@ -24,6 +24,14 @@ class _WaitState extends State<Wait> {
     //初始化声网相关操作
     initializeAgora();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // AgoraRtcEngine.muteLocalAudioStream(true);
+    // AgoraRtcEngine.destroy();
+    AgoraRtcEngine.leaveChannel();
+    super.dispose();
   }
 
   Future<void> initializeAgora() async {
@@ -69,7 +77,7 @@ class _WaitState extends State<Wait> {
     };
 
     AgoraRtcEngine.onUserOffline = (int uid, int reason) {
-      showToast("${UserTypes[uid - 1]}退出");
+      // showToast("${UserTypes[uid - 1]}退出");
     };
 
     AgoraRtcEngine.onFirstRemoteVideoFrame = (
@@ -163,12 +171,17 @@ class _WaitState extends State<Wait> {
             if (widget.userType == Identity.ChairMan) {
               //  主席拥有禁言远端的权力
               AgoraRtcEngine.muteAllRemoteAudioStreams(true);
+              DebateApi.api.controlDebate(FormData.fromMap({
+                'state': true,
+                'homeid': widget.homeid,
+              }));
             }
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => Debate(
                   homeid: widget.homeid,
+                  userType: widget.userType,
                 ),
               ),
             );

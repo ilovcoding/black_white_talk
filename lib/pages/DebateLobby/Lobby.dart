@@ -59,7 +59,7 @@ class _DebateLobbyState extends State<DebateLobby>
               size: 15,
             ),
             border: InputBorder.none,
-            hintText: '请输入房间号码',
+            hintText: '请输入辩题',
             hintStyle: TextStyle(color: Colors.white),
           ),
         ),

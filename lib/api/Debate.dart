@@ -13,7 +13,23 @@ class DebateApi {
     return res;
   }
 
-  Future selectRole(FormData homeid){
+  Future selectRole(FormData homeid) {
     return Request.postFormData('/selectRole', homeid);
+  }
+
+  Future getRolesInfo(FormData homeid) {
+    return Request.postFormData('/getRolesInfo', homeid);
+  }
+
+  Future getSpeak(FormData homeid) {
+    return Request.postFormData('/getSpeak', homeid);
+  }
+
+  Future controlDebate(FormData data) {
+    return Request.postFormData('/controlDebate', data);
+  }
+
+  Future audioControl(FormData data) {
+    return Request.postFormData('/audioControl', data);
   }
 }
