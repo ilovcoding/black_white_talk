@@ -26,6 +26,7 @@ class _DebateState extends State<Debate> {
   List<dynamic> negative = [];
   int speaking = 1;
   bool muted = true;
+
   @override
   void dispose() {
     AgoraRtcEngine.leaveChannel();
@@ -42,6 +43,7 @@ class _DebateState extends State<Debate> {
       null,
       widget.userType.index + 1,
     );
+    // AgoraRtcEngine.enableAudio();
     // 获取辩题
     getHomeName();
     //  获取成员信息
@@ -53,19 +55,29 @@ class _DebateState extends State<Debate> {
     super.initState();
   }
 
-  void socketSpeak() {
-    String _event = "speak${widget.hashCode}";
+  void socketSpeak() async {
+    String _event = "speak${widget.homeid}";
     socket.on(_event, (data) {
       if (data == false) {
         showToast("改变状态失败请重新尝试");
         return;
       }
-      AgoraRtcEngine.muteAllRemoteVideoStreams(true);
-      AgoraRtcEngine.muteRemoteAudioStream(int.parse(data), false);
-      bool _muted = (speaking != int.parse(data));
+
+      // if (int.parse(data) == widget.userType.index + 1) {
+      //   print(data);
+      //   print(widget.userType.index + 1);
+      //   AgoraRtcEngine.muteRemoteAudioStream(int.parse(data), false);
+
+      //   AgoraRtcEngine.muteLocalAudioStream(false);
+      //   print("hhh");
+      // } else {
+      //   AgoraRtcEngine.muteRemoteAudioStream(int.parse(data), false);
+      // }
       if (mounted) {
+        int _speacking = int.parse(data);
         setState(() {
-          muted = _muted;
+          speaking = _speacking;
+          muted = (widget.userType.index != (_speacking - 1));
         });
       }
     });
@@ -141,7 +153,12 @@ class _DebateState extends State<Debate> {
   }
 
   void _closeAudio(index) async {
-    await DebateApi.api.audioControl(
+    // if (index == speaking) {
+    //   AgoraRtcEngine.muteLocalAudioStream(true);
+    // } else {
+    //   AgoraRtcEngine.muteRemoteAudioStream(index, true);
+    // }
+    var res = await DebateApi.api.audioControl(
       FormData.fromMap(
         {'homeid': widget.homeid, 'audio': index, 'state': 'close'},
       ),
@@ -149,96 +166,97 @@ class _DebateState extends State<Debate> {
     socket.emit("speak", widget.homeid);
   }
 
-  void _onToggleMute() async {
-    // setState(() {
-    //   muted = !muted;
-    // });
-    if (muted) {
-      // 当前静音要打开语音
-      await getSpeak();
-      if (speaking == 0) {
-        //  0表示当前无人说话 任何人都可以说话
-        _openAudio(widget.userType.index + 1);
-      } else {
-        // 目前有人说话
-        if (widget.userType != Identity.ChairMan) {
-          // 不是主席直接报错
-          showToast("${UserTypes[speaking - 1]}正在说话中");
+  Function _onToggleMute(int index) {
+    // print(index);
+    return () async {
+      if (index == widget.userType.index + 1) {}
+      if (speaking != index) {
+        // 当前静音要打开语音
+        await getSpeak();
+        if (speaking == 0) {
+          //  0表示当前无人说话 任何人都可以说话
+          _openAudio(index);
         } else {
-          showDialog<void>(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("${UserTypes[speaking - 1]}正在说话"),
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Text("是否强行切换至我方?"),
-                    ],
+          // 目前有人说话
+          if (widget.userType != Identity.ChairMan) {
+            // 不是主席直接报错
+            showToast("${UserTypes[speaking - 1]}正在说话中");
+          } else {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("${UserTypes[speaking - 1]}正在说话"),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text("是否强行切换至我方?"),
+                      ],
+                    ),
                   ),
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("取消"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text('确认'),
-                    onPressed: () {
-                      _openAudio(widget.userType.index + 1);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("取消"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('确认'),
+                      onPressed: () {
+                        _openAudio(index);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         }
+      } else {
+        // 当前不是静音 要结束说话
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('提示'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text('是否结束当前语言'),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('取消'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text('确认'),
+                  onPressed: () {
+                    _closeAudio(index);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       }
-    } else {
-      // 当前不是静音 要结束说话
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('提示'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('是否结束当前通话'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('取消'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text('确认'),
-                onPressed: () {
-                  _closeAudio(widget.userType.index + 1);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+    };
   }
 
   Widget myPanel() {
     return Column(
       children: <Widget>[
         RawMaterialButton(
-          onPressed: _onToggleMute,
+          onPressed: _onToggleMute(widget.userType.index + 1),
           child: Icon(
             muted ? Icons.mic_off : Icons.mic,
             color: muted ? Colors.white : Colors.blueAccent,
@@ -272,7 +290,7 @@ class _DebateState extends State<Debate> {
                 return Column(
                   children: <Widget>[
                     RawMaterialButton(
-                      onPressed: _onToggleMute,
+                      onPressed: _onToggleMute(data['index']),
                       child: Icon(
                         _muted ? Icons.mic_off : Icons.mic,
                         color: _muted ? Colors.white : Colors.blueAccent,
@@ -298,7 +316,7 @@ class _DebateState extends State<Debate> {
                 return Column(
                   children: <Widget>[
                     RawMaterialButton(
-                      onPressed: _onToggleMute,
+                      onPressed: _onToggleMute(data['index']),
                       child: Icon(
                         _muted ? Icons.mic_off : Icons.mic,
                         color: _muted ? Colors.white : Colors.blueAccent,
@@ -417,13 +435,15 @@ class _DebateState extends State<Debate> {
                         SizedBox(
                           height: 30,
                         ),
-                        Text(
-                          "${UserTypes[speaking - 1]}:说话中",
-                          style: TextStyle(
-                            color: Colors.lightBlue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        speaking == 0
+                            ? Text("空闲中")
+                            : Text(
+                                "${UserTypes[speaking - 1]}:说话中",
+                                style: TextStyle(
+                                  color: Colors.lightBlue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ],
                     ),
                   ),

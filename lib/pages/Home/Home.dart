@@ -273,7 +273,7 @@ class _HomeState extends State<Home> {
                 height: 20,
               ),
               ListTile(
-                title: Text('以辩会友'),
+                title: Text('辩论社区'),
                 leading: Icon(FontAwesomeIcons.userPlus),
                 onTap: () {
                   Navigator.pushNamed(context, RouteName.debateFriend);

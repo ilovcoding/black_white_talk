@@ -32,4 +32,10 @@ class DebateApi {
   Future audioControl(FormData data) {
     return Request.postFormData('/audioControl', data);
   }
+  Future findDebateHome(FormData data){
+    return Request.postFormData('/findDebateHome', data);
+  }
+ Future recentlyHomeList(){
+   return Request.getMethod('/recentlyHomeList');
+ }
 }

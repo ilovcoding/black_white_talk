@@ -26,13 +26,7 @@ class _WaitState extends State<Wait> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    // AgoraRtcEngine.muteLocalAudioStream(true);
-    // AgoraRtcEngine.destroy();
-    AgoraRtcEngine.leaveChannel();
-    super.dispose();
-  }
+
 
   Future<void> initializeAgora() async {
     if (APP_ID.isEmpty) {
@@ -170,7 +164,7 @@ class _WaitState extends State<Wait> {
             //主席静音掉所有其他的远程连接
             if (widget.userType == Identity.ChairMan) {
               //  主席拥有禁言远端的权力
-              AgoraRtcEngine.muteAllRemoteAudioStreams(true);
+              // AgoraRtcEngine.muteAllRemoteAudioStreams(true);
               DebateApi.api.controlDebate(FormData.fromMap({
                 'state': true,
                 'homeid': widget.homeid,

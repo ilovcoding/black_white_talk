@@ -1,7 +1,8 @@
+import 'package:black_white_talk/api/Debate.dart';
 import 'package:black_white_talk/config/router.dart';
 import 'package:black_white_talk/static/Assets.dart';
 import 'package:black_white_talk/utils/agora.dart';
-import 'package:black_white_talk/utils/enum.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -16,27 +17,54 @@ class DebateLobby extends StatefulWidget {
 class _DebateLobbyState extends State<DebateLobby>
     with SingleTickerProviderStateMixin {
   TextEditingController _findContext = TextEditingController();
-  TabController _tabController;
-  int _currentTabsIndex = 0;
+  List<Widget> widgets = [];
   @override
   void initState() {
     // TODO: implement initState
     socket.disconnect();
+    recentlyHomeList();
     super.initState();
-
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() => _handleTabsChange());
   }
 
-  _handleTabsChange() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        _currentTabsIndex = _tabController.index;
+  void recentlyHomeList() {
+    DebateApi.api.recentlyHomeList().then((var onValue) {
+      // TimeOfDay.fromDateTime(time)
+      List _list = List.from(onValue);
+      List<Widget> _widgets = [
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+          child: Text(
+            '近期赛事',
+            style: TextStyle(fontSize: 20),
+          ),
+          alignment: Alignment.topLeft,
+        )
+      ];
+      _list.forEach((var data) {
+        String date =  DateTime.fromMillisecondsSinceEpoch(data['timestamp']).toString();
+        List<String> dataArr = date.split(" ");
+        _widgets.add(SizedBox(height: 20));
+        _widgets.add(Row(
+          children: <Widget>[
+            SizedBox(
+              width: 10,
+            ),
+            Text("${dataArr[0]}"),
+            SizedBox(
+              width: 10,
+            ),
+            Text("${data['title']}"),
+          ],
+        ));
       });
-    }
+      setState(() {
+        widgets = _widgets;
+      });
+    });
   }
 
-  RegExp homeNum = RegExp(r'^[0-9]*$');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +79,6 @@ class _DebateLobbyState extends State<DebateLobby>
         ),
         title: TextField(
           controller: _findContext,
-          keyboardType: TextInputType.number,
           decoration: InputDecoration(
             prefixIcon: Icon(
               FontAwesomeIcons.search,
@@ -76,64 +103,17 @@ class _DebateLobbyState extends State<DebateLobby>
                 ),
                 child: Text('查找'),
               ),
-              onPressed: () {
-                if (_findContext.text != '' &&
-                    homeNum.hasMatch(_findContext.text)) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return SimpleDialog(
-                        title: Text(
-                          '欢迎来到辩场${_findContext.text}',
-                          style: TextStyle(fontFamily: '楷书'),
-                        ),
-                        children: <Widget>[
-                          Text(
-                            "  请选择你的身份",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                            ),
-                          ),
-                          SimpleDialogOption(
-                            child: OutlineButton(
-                              child: Text('主席'),
-                              onPressed: () {
-                                Navigator.pop(context, Identity.ChairMan);
-                              },
-                            ),
-                          ),
-                          SimpleDialogOption(
-                            child: OutlineButton(
-                              child: Text('辩手'),
-                              onPressed: () {
-                                Navigator.pop(context, Identity.ChairMan);
-                              },
-                            ),
-                          ),
-                          SimpleDialogOption(
-                            child: OutlineButton(
-                              child: Text('评委'),
-                              onPressed: () {
-                                Navigator.pop(context, Identity.ChairMan);
-                              },
-                            ),
-                          ),
-                          SimpleDialogOption(
-                            child: OutlineButton(
-                              child: Text('观众'),
-                              onPressed: () {
-                                Navigator.pop(context, Identity.ChairMan);
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+              onPressed: () async {
+                if (_findContext.text == "") {
+                  showToast("查找辩题不能为空");
                 } else {
-                  showToast('请输入纯数字的房间号');
-                  return null;
+                  var res = await DebateApi.api.findDebateHome(
+                      FormData.fromMap({'homeName': _findContext.text}));
+                  if (res == true) {
+                    Navigator.pushNamed(context, RouteName.homeList);
+                  } else {
+                    showToast("该辩题不存在");
+                  }
                 }
               },
             ),
@@ -162,199 +142,88 @@ class _DebateLobbyState extends State<DebateLobby>
               pagination: new SwiperPagination(),
             ),
           ),
-          TabBar(
-            controller: _tabController,
-            indicator: BoxDecoration(color: Colors.grey),
-            unselectedLabelColor: Colors.black,
-            labelPadding: EdgeInsets.all(0),
-            tabs: <Widget>[
-              Tab(
-                child: Text('专业辩手区'),
+          Column(
+            children: <Widget>[
+              SizedBox(
+                height: 30,
               ),
-              Tab(
-                child: Text('辩论爱好者'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          FontAwesomeIcons.users,
+                          size: 40,
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteName.homeList,
+                          );
+                        },
+                      ),
+                      Text('自由比赛', style: TextStyle(color: Colors.grey))
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Icon(
+                        FontAwesomeIcons.archway,
+                        size: 40,
+                      ),
+                      Text('专业比赛', style: TextStyle(color: Colors.grey))
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          FontAwesomeIcons.robot,
+                          size: 40,
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteName.debateRobot,
+                          );
+                        },
+                      ),
+                      Text('人机模拟', style: TextStyle(color: Colors.grey))
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Icon(
+                        FontAwesomeIcons.school,
+                        size: 40,
+                      ),
+                      Text('高校赛', style: TextStyle(color: Colors.grey))
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                height: 10,
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                color: Colors.grey,
+                width: MediaQuery.of(context).size.width,
               ),
             ],
           ),
-          _currentTabsIndex == 0
-              ? Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(
-                                FontAwesomeIcons.users,
-                                size: 40,
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, RouteName.homeList);
-                              },
-                            ),
-                            Text('自由预约比赛', style: TextStyle(color: Colors.grey))
-                          ],
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.archway,
-                              size: 40,
-                            ),
-                            Text('最佳联手联赛', style: TextStyle(color: Colors.grey))
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.university,
-                              size: 40,
-                            ),
-                            Text('高校友谊赛', style: TextStyle(color: Colors.grey))
-                          ],
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.school,
-                              size: 40,
-                            ),
-                            Text('高校排位赛', style: TextStyle(color: Colors.grey))
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      height: 10,
-                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      color: Colors.grey,
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                  ],
-                )
-              : Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.userClock,
-                              size: 40,
-                            ),
-                            Text('单人匹配', style: TextStyle(color: Colors.grey))
-                          ],
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.robot,
-                              size: 40,
-                            ),
-                            Text('人机模拟辩论', style: TextStyle(color: Colors.grey))
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.university,
-                              size: 40,
-                            ),
-                            Text('自定义比赛', style: TextStyle(color: Colors.grey))
-                          ],
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              FontAwesomeIcons.arrowAltCircleUp,
-                              size: 40,
-                            ),
-                            Text('辩手晋级赛', style: TextStyle(color: Colors.grey))
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      height: 10,
-                      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      color: Colors.grey,
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                  ],
-                ),
           Card(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  child: Text(
-                    '近期赛事',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  alignment: Alignment.topLeft,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text('1天后'),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text('2020高校辩论排位赛')
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text('3天后'),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text('电气学院机械学院辩论赛')
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-              ],
+              children: widgets,
             ),
           )
         ],

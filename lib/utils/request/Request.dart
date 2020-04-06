@@ -19,7 +19,7 @@ class Request {
     String usernameToken = await Storage.getString(Storage.token);
     Dio dio = new Dio(
       BaseOptions(
-        baseUrl: "http://192.168.1.12:3000",
+        baseUrl: "http://192.168.1.3:3000",
         sendTimeout: 10000,
         receiveTimeout: 10000,
         method: method,

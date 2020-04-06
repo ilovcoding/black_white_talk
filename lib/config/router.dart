@@ -6,6 +6,7 @@ import 'package:black_white_talk/pages/DebateLife/DebateLife.dart';
 import 'package:black_white_talk/pages/DebateLobby/Lobby.dart';
 import 'package:black_white_talk/pages/DebateLobby/home/HomeList.dart';
 import 'package:black_white_talk/pages/DebateLobby/home/debate/Debate.dart';
+import 'package:black_white_talk/pages/DebateLobby/robot/DebateRobot.dart';
 import 'package:black_white_talk/pages/DebateResource/DebateResourcePage.dart';
 import 'package:black_white_talk/pages/Home/Home.dart';
 import 'package:black_white_talk/pages/Login/Login.dart';
@@ -39,6 +40,7 @@ class RouteName {
   static const String register = '/register';
   static const String homeList = '/debate/homelist';
   static const String debateCourse = '/debate/course';
+  static const String debateRobot = '/debate/robot';
 }
 
 class Router {
@@ -79,7 +81,9 @@ class Router {
       case RouteName.homeList:
         return MaterialPageRoute(builder: (_) => HomeList());
       case RouteName.debateCourse:
-        return MaterialPageRoute(builder: (_)=> Course());  
+        return MaterialPageRoute(builder: (_) => Course());
+      case RouteName.debateRobot:
+        return MaterialPageRoute(builder: (_) => DebateRobot());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -1,12 +1,10 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 const String APP_ID = '8e68be061686407cbf1d99f55b940d78';
-const String SocketUrl = 'http://192.168.1.12:3000';
+const String SocketUrl = 'http://192.168.1.3:3000';
 
 IO.Socket socket = IO.io('${SocketUrl}', <String, dynamic>{
   'transports': ['websocket'],
-  // 'autoConnect': false,
-  // 'extraHeaders': {'foo': 'bar'} // optional
 });
 // socket.connect()
 
