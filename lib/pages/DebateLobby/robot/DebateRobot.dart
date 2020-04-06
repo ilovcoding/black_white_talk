@@ -17,12 +17,17 @@ class _DebateRobotState extends State<DebateRobot> {
   TextEditingController textController = new TextEditingController();
   String token = "";
   List<Card> talkCard = [];
-
   @override
   void initState() {
     Storage.getString(Storage.token)
         .then((onValue) => {token = onValue.substring(0, 10)});
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    talkCard.clear();
+    super.dispose();
   }
 
   Widget _submitText() {
@@ -51,9 +56,7 @@ class _DebateRobotState extends State<DebateRobot> {
           ),
           FlatButton(
             onPressed: () async {
-              print(token);
               var res = await talk(textController.text, token);
-
               if (res['ret'] != 0) {
                 showToast("请重新尝试发送");
               } else {
@@ -78,6 +81,7 @@ class _DebateRobotState extends State<DebateRobot> {
                       ),
                     ),
                   );
+                print(_talkCard.length);
                 setState(() {
                   talkCard = _talkCard;
                 });
@@ -118,7 +122,12 @@ class _DebateRobotState extends State<DebateRobot> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: ListView(children: talkCard),
+            child: ListView.builder(
+              itemCount: talkCard.length,
+              itemBuilder: (context, position) {
+                return talkCard[position];
+              },
+            ),
           ),
           _submitText(),
         ],

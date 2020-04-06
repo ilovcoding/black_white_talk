@@ -14,7 +14,7 @@ Map params(Map paramsMap) {
   });
 
   _str += "app_key=${appKey}";
-  print(_str);
+
   String sign = toMD5(_str).toUpperCase();
   Map<String, dynamic> signMap = {"sign": sign};
   paramsMap.addAll(signMap);
