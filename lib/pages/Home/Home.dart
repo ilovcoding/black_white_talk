@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
                   width: 10.0,
                 ),
                 // 排名模块
-                router(ranking(), RouteName.ranking)
+                router(community(), RouteName.community)
               ],
             ),
             SizedBox(
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Container ranking() {
+  Container community() {
     return Container(
       height: MediaQuery.of(context).size.height / 6.0,
       width: MediaQuery.of(context).size.height / 6.0,
@@ -99,7 +99,7 @@ class _HomeState extends State<Home> {
       ),
       child: Center(
         child: Text(
-          '辩手\n排名',
+          '辩论\n社区',
           style: TextStyle(color: Colors.black, fontSize: 30),
         ),
       ),
@@ -276,7 +276,7 @@ class _HomeState extends State<Home> {
                 title: Text('辩论社区'),
                 leading: Icon(FontAwesomeIcons.userPlus),
                 onTap: () {
-                  Navigator.pushNamed(context, RouteName.debateFriend);
+                  Navigator.pushNamed(context, RouteName.community);
                 },
               ),
               ListTile(
